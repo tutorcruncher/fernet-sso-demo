@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="description" content="em2">
+    <meta name="author" content="Samuel Colvin">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TutorCruncher SSO Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" type="text/css">
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">TutorCruncher SSO Example</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li>{{ profile.nm }}</li>
+              <li><a href="/logout">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {% for login in logins %}
+        <div>{{ login }}</div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
