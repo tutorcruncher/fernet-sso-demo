@@ -40,3 +40,42 @@ obj2 = json.loads(f.decrypt(url.split('token=')[-1])  # should really use a prop
 # obj2: {u'apt': 321, u'id': 123, u'nm': u'Samuel Colvin', u'rt': u'Contractor'}
 ```
 
+## Usage
+
+This is just a simply proof of concept app which lets users "log in" and view who else has logged in.
+
+The only extra complexity it adds which real life applications may not have to implement is a screen to set a 
+new SSO shared secret to make testing easier.
+
+#### 1 Setup a secret
+
+You can create a new group to login to by going to https://fernetsso.herokuapp.com/add-group. You can either
+use the secret offered or supply your own, eg. from TutorCruncher's SSO Config or by calling `Fernet.generate_key()`.
+
+If you're using the auto-created secret, record it for future use.
+
+#### 2 Create the SSO token
+
+You now need to created the encrypted token to login with. This can be done by the sign-in app like TutorCruncher.
+ 
+If you don't have the app other setup you can use the `util.py` tool her to generate the token, eg:
+
+```shell
+./utils.py create_token <the sso secret> "nm=Samuel Colvin" rt=Contractor id=123
+> data: {"rt": "Contractor", "nm": "Samuel Colvin", "id": "123"}
+> Created SSO token:
+>   ?token=<the token>
+```
+
+The `utils.py create_token` script can take any arbitary key:value pairs but this app requires the token to include
+`nm` (name) and `rt` (role type).
+
+#### 3 Go to the url
+
+You can then use the token to sign in. Go to 
+
+```
+https://fernetsso.herokuapp.com/sso-lander/<group name>?token=<the token>
+```
+
+The group name is the name you supplied in setup 1 above.
