@@ -1,7 +1,8 @@
 import os
 import re
-import logging
 import json
+import logging
+from urllib.parse import urlparse
 from json import JSONDecodeError
 from datetime import datetime
 
@@ -14,7 +15,9 @@ app.logger.addHandler(logging.StreamHandler())
 
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'this is not a secure secret')
 
-redis_cli = Redis()
+REDIS_URL = os.getenv('REDIS_URL', 'redis://h:@localhost:6379')
+redis_url = urlparse(REDIS_URL)
+redis_cli = Redis(host=redis_url.hostname, port=redis_url.port, password=redis_url.password or None)
 
 
 @app.route('/')
