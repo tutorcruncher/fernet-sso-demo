@@ -11,7 +11,7 @@ from redis import Redis
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 
-app.secret_key = 'this is not a secure secret'
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'this is not a secure secret')
 
 TOKEN_SECRET = os.getenv('TOKEN_SECRET', '').encode('utf8')
 if not TOKEN_SECRET:
