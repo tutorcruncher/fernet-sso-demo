@@ -60,7 +60,8 @@ def add_group_view():
         flash('Group {} created'.format(group))
         return redirect('/')
     else:
-        return render_template('add_group.jinja', profile=session.get('profile'))
+        initial_key = Fernet.generate_key().decode('utf8')
+        return render_template('add_group.jinja', initial_key=initial_key, profile=session.get('profile'))
 
 
 @app.route('/sso-lander/<group>')
