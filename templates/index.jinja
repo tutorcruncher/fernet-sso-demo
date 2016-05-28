@@ -1,0 +1,7 @@
+{% extends 'page.jinja' %}
+
+{% block content %}
+  {% for login in logins %}
+    <div>{{ login }}</div>
+  {% endfor %}
+{% endblock %}

@@ -19,17 +19,17 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li>{{ profile.nm }}</li>
-              <li><a href="/logout">Logout</a></li>
-            </ul>
+            {% if profile %}
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="/profile">{{ profile.nm }}</a></li>
+                <li><a href="/logout">Logout</a></li>
+              </ul>
+            {% endif %}
           </div>
         </div>
       </nav>
 
-      {% for login in logins %}
-        <div>{{ login }}</div>
-      {% endfor %}
+      {% block content %}{% endblock %}
     </div>
   </body>
 </html>

@@ -22,18 +22,35 @@ fernet = Fernet(TOKEN_SECRET)
 redis_cli = Redis()
 
 
-
 @app.route('/')
-def index():
+def index_view():
     profile = session.get('profile')
     if not profile:
         return 'Permission Denied: you can sign in using TutorCruncher SSO', 403
     logins = [l.decode('utf8') for l in redis_cli.lrange('logins', 0, -1)]
-    return render_template('page.jinja', profile=profile, logins=logins)
+    return render_template('index.jinja', profile=profile, logins=logins)
+
+
+@app.route('/profile')
+def profile_view():
+    profile = session.get('profile')
+    if not profile:
+        return 'Permission Denied: you can sign in using TutorCruncher SSO', 403
+    return render_template('profile.jinja', profile=profile)
+
+
+@app.route('/add-group', methods=['GET', 'POST'])
+def add_group_view():
+    if request.method == 'POST':
+        group_key = 'group:{}'.format(request.form['group-name'])
+        redis_cli[group_key] = request.form['token']
+        return redirect('/')
+    else:
+        return render_template('add_group.jinja')
 
 
 @app.route('/sso-lander')
-def sso_lander():
+def sso_lander_view():
     token = request.args.get('token', '').encode('utf8')
 
     try:

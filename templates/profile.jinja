@@ -1,0 +1,10 @@
+{% extends 'page.jinja' %}
+
+{% block content %}
+  <dl class="dl-horizontal">
+  {% for key, value in profile.items() %}
+    <dt>{{ key }}:</dt>
+    <dd>{{ value }}</dd>
+  {% endfor %}
+  </dl>
+{% endblock %}
