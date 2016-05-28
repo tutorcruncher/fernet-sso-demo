@@ -1,11 +1,12 @@
 import os
+import re
+import logging
 import json
 from json import JSONDecodeError
-import logging
 from datetime import datetime
 
 from cryptography.fernet import Fernet, InvalidToken
-from flask import Flask, request, redirect, render_template, session
+from flask import Flask, request, redirect, render_template, session, flash
 from redis import Redis
 
 app = Flask(__name__)
@@ -13,22 +14,18 @@ app.logger.addHandler(logging.StreamHandler())
 
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'this is not a secure secret')
 
-TOKEN_SECRET = os.getenv('TOKEN_SECRET', '').encode('utf8')
-if not TOKEN_SECRET:
-    raise RuntimeError('no "TOKEN_SECRET" environment variable found')
-
-fernet = Fernet(TOKEN_SECRET)
-
 redis_cli = Redis()
 
 
 @app.route('/')
 def index_view():
-    profile = session.get('profile')
-    if not profile:
-        return 'Permission Denied: you can sign in using TutorCruncher SSO', 403
-    logins = [l.decode('utf8') for l in redis_cli.lrange('logins', 0, -1)]
-    return render_template('index.jinja', profile=profile, logins=logins)
+    group = session.get('group')
+    if group:
+        group_key = 'info:{}'.format(group)
+        log = [l.decode('utf8') for l in redis_cli.lrange(group_key, 0, -1)]
+    else:
+        log = None
+    return render_template('index.jinja', profile=session.get('profile'), log=log)
 
 
 @app.route('/profile')
@@ -36,23 +33,32 @@ def profile_view():
     profile = session.get('profile')
     if not profile:
         return 'Permission Denied: you can sign in using TutorCruncher SSO', 403
-    return render_template('profile.jinja', profile=profile)
+    return render_template('profile.jinja', profile=profile, group=session.get('group'))
 
 
 @app.route('/add-group', methods=['GET', 'POST'])
 def add_group_view():
     if request.method == 'POST':
-        group_key = 'group:{}'.format(request.form['group-name'])
-        redis_cli[group_key] = request.form['token']
+        group = re.sub(r'\W', '', request.form['group-name'])
+        group_key = 'secret:{}'.format(group)
+        redis_cli[group_key] = request.form['secret']
+        group_key = 'info:{}'.format(group)
+        redis_cli.lpush(group_key, '{} group created {:%Y-%m-%d %H:%M:%S}'.format(group, datetime.now()))
+        flash('Group {} created'.format(group))
         return redirect('/')
     else:
-        return render_template('add_group.jinja')
+        return render_template('add_group.jinja', profile=session.get('profile'))
 
 
-@app.route('/sso-lander')
-def sso_lander_view():
+@app.route('/sso-lander/<group>')
+def sso_lander_view(group):
+
+    secret = redis_cli.get('secret:{}'.format(group))
+    if not secret:
+        return 'group not found', 404
+    fernet = Fernet(secret)
+
     token = request.args.get('token', '').encode('utf8')
-
     try:
         data = fernet.decrypt(token)
     except InvalidToken:
@@ -62,15 +68,21 @@ def sso_lander_view():
         data = json.loads(data.decode('utf8'))
     except JSONDecodeError:
         return '400: problem parsing json', 400
-    session['profile'] = data
 
-    redis_cli.lpush('logins', '{nm} ({rt}) logged in at {dt}'.format(dt=datetime.now(), **data))
+    session.update(
+        profile=data,
+        group=group,
+    )
+
+    group_key = 'info:{}'.format(group)
+    redis_cli.lpush(group_key, '{nm} ({rt}) logged in at {dt:%Y-%m-%d %H:%M:%S}'.format(dt=datetime.now(), **data))
     return redirect('/')
 
 
 @app.route('/logout')
 def logout():
     session.pop('profile')
+    session.pop('group')
     return redirect('/')
 
 

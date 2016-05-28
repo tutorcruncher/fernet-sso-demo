@@ -1,7 +1,17 @@
 {% extends 'page.jinja' %}
 
 {% block content %}
-  {% for login in logins %}
-    <div>{{ login }}</div>
-  {% endfor %}
+  {% if profile %}
+    {% for l in log %}
+      <div>{{ l }}</div>
+    {% endfor %}
+  {% else %}
+    <p>
+      <b>You are not logged in.</b>
+    </p>
+    <p>
+      Example of Fernet based SSO system.
+      See the <a href="https://github.com/tutorcruncher/fernet-sso-demo">source code</a> for more details.
+    </p>
+  {% endif %}
 {% endblock %}
