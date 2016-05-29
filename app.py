@@ -54,20 +54,27 @@ def add_group_view():
     if request.method == 'POST':
         group = re.sub(r'\W', '', request.form['group-name'])
         group_key = 'secret:{}'.format(group)
-        redis_cli[group_key] = request.form['secret']
-        group_key = 'info:{}'.format(group)
-        redis_cli.lpush(group_key, '{} group created {:%Y-%m-%d %H:%M:%S}'.format(group, datetime.now()))
-        flash('Group {} created'.format(group))
-        return redirect('/')
-    else:
-        initial_key = Fernet.generate_key().decode('utf8')
-        return render_template('add_group.jinja', initial_key=initial_key, profile=session.get('profile'))
+        secret = request.form['secret']
+        try:
+            Fernet(secret)
+        except ValueError:
+            flash('Invalid secret "{}", must be a valid fernet secret'.format(secret))
+        else:
+            redis_cli[group_key] = secret
+            group_key = 'info:{}'.format(group)
+            redis_cli.lpush(group_key, '{} group created {:%Y-%m-%d %H:%M:%S}'.format(group, datetime.now()))
+            flash('Group {} created'.format(group))
+            return redirect('/')
+    return render_template('add_group.jinja', profile=session.get('profile'))
 
 
 @app.route('/sso-lander/<group>')
 def sso_lander_view(group):
     """
     Log a user into the system using a signed and encrypted get argument "token".
+
+    Here a ttl of 60 seconds is life. See
+    https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet.decrypt.
     """
     secret = redis_cli.get('secret:{}'.format(group))
     if not secret:
@@ -76,7 +83,7 @@ def sso_lander_view(group):
 
     token = request.args.get('token', '').encode('utf8')
     try:
-        data = fernet.decrypt(token)
+        data = fernet.decrypt(token, ttl=60)
     except InvalidToken:
         return '403: Invalid Token', 403
 
