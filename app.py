@@ -91,7 +91,7 @@ def sso_lander_view(group):
         data = json.loads(data.decode('utf8'))
     except JSONDecodeError:
         return '400: problem parsing json', 400
-
+    data['referrer'] = request.referrer
     session.update(
         profile=data,
         group=group,
