@@ -31,12 +31,16 @@ TutorCruncher supplies the following variables in SSO tokens:
 |`nm`     | first and last name of the user                                                                                                     |
 |`rt`     | role type, Administrator, Contractor (eg. tutor) or ServiceRecipient (eg. student)                                                  |
 |`ts`     | unix timestamp when the user clicked the link, aka "now"                                                                            | 
+|`tz`     | the user's timezone name, this maybe null if no user or branch timezone is configured **†**                                         | 
 |`br_id`  | branch id, the id of the branch the user clicked the link from, generally there's one branch per company but there can be more      |
 |`br_nm`  | branch name                                                                                                                         |
 |`apt_id` | appointment(lesson) id, unique for each appointment **(only available when the SSO link was followed from an appointment)**         |
 |`apt_nm` | name or topic of the appointment **(only available when the SSO link was followed from an appointment)**                            |
 |`apt_st` | unix timestamp for the start datetime of the appointment **(only available when the SSO link was followed from an appointment)**    |
 |`apt_fn` | unix timestamp for the finish datetime of the appointment  **(only available when the SSO link was followed from an appointment)**  |
+
+**†** timezones are provided as ISO timezone names eg. `America/New_York`, see the "YZ" column 
+[here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Token workflow
 
