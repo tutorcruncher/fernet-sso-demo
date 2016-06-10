@@ -19,6 +19,25 @@ characters), for reference the url in the example is 220 characters long.\
 * no API integration is initially required to integrate as all required information is passed in the token.
 * token expiry can easily be checked without breaking any implementation as this feature is built into Fernet. 
 
+## Token variables
+
+(ot strictly part of a general Fernet SSO workflow, but this is still a useful play to put the information)
+
+TutorCruncher supplies the following variables in SSO tokens:
+
+| Key     | Description                                                                                                                         |
+|--------:|-------------------------------------------------------------------------------------------------------------------------------------|
+|`id`     | id of the user, unique for each user                                                                                                |
+|`nm`     | first and last name of the user                                                                                                     |
+|`rt`     | role type, Administrator, Contractor (eg. tutor) or ServiceRecipient (eg. student)                                                  |
+|`ts`     | unix timestamp when the user clicked the link, aka "now"                                                                            | 
+|`br_id`  | branch id, the id of the branch the user clicked the link from, generally there's one branch per company but there can be more      |
+|`br_nm`  | branch name                                                                                                                         |
+|`apt_id` | appointment(lesson) id, unique for each appointment **(only available when the SSO link was followed from an appointment)**         |
+|`apt_nm` | name or topic of the appointment **(only available when the SSO link was followed from an appointment)**                            |
+|`apt_st` | unix timestamp for the start datetime of the appointment **(only available when the SSO link was followed from an appointment)**    |
+|`apt_fn` | unix timestamp for the finish datetime of the appointment  **(only available when the SSO link was followed from an appointment)**  |
+
 ## Token workflow
 
 Below is a simple example of the workflow (this is in python but the equivalent would be 
