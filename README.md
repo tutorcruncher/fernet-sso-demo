@@ -21,7 +21,7 @@ characters), for reference the url in the example is 220 characters long.\
 
 ## Token variables
 
-(ot strictly part of a general Fernet SSO workflow, but this is still a useful play to put the information)
+(Not strictly part of a general Fernet SSO workflow, but this is still a useful play to put the information)
 
 TutorCruncher supplies the following variables in SSO tokens:
 
