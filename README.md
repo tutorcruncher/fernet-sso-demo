@@ -29,6 +29,7 @@ TutorCruncher supplies the following variables in SSO tokens:
 |--------:|-------------------------------------------------------------------------------------------------------------------------------------|
 |`id`     | id of the user, unique for each user                                                                                                |
 |`nm`     | first and last name of the user                                                                                                     |
+|`e`      | email address of the user                                                                                                     |
 |`rt`     | role type, Administrator, Contractor (eg. tutor) or ServiceRecipient (eg. student)                                                  |
 |`ts`     | unix timestamp when the user clicked the link, aka "now"                                                                            | 
 |`tz`     | the user's timezone name, this maybe null if no user or branch timezone is configured **†**                                         | 
