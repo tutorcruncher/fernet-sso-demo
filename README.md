@@ -39,6 +39,10 @@ TutorCruncher supplies the following variables in SSO tokens:
 |`apt_nm` | name or topic of the appointment **(only available when the SSO link was followed from an appointment)**                            |
 |`apt_st` | unix timestamp for the start datetime of the appointment **(only available when the SSO link was followed from an appointment)**    |
 |`apt_fn` | unix timestamp for the finish datetime of the appointment  **(only available when the SSO link was followed from an appointment)**  |
+|`sr_nms` | A list of student names on the apt |
+|`con_nms` | A list of tutor names on the apt |
+| `sr_ids` | A list of student ids on the apt |
+| `con_ids` | A list of tutor ids on the apt |
 
 **†** timezones are provided as ISO timezone names eg. `America/New_York`, see the "YZ" column 
 [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
